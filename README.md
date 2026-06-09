@@ -74,6 +74,6 @@ psql -U postgres -f database/migrations/V1__initial_schema.sql
 - **Phase 2** — AI recommendations, sentiment analysis, fake review detection
 - **Phase 3** — Multi-category, personalization, price tracking, AI assistant
 
-## License
+## License Krishna kumar
 
 Proprietary — BetterChoice AI
