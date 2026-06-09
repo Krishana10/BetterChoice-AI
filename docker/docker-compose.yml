@@ -1,0 +1,34 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: betterchoice-db
+    environment:
+      POSTGRES_DB: betterchoice
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Uncomment when backend Dockerfile is ready
+  # backend:
+  #   build: ./backend
+  #   ports:
+  #     - "8080:8080"
+  #   environment:
+  #     SPRING_PROFILES_ACTIVE: dev
+  #     SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/betterchoice
+  #     JWT_SECRET: dev-secret-change-in-production-min-256-bits
+  #     GEMINI_API_KEY: ${GEMINI_API_KEY}
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+
+volumes:
+  postgres_data:
