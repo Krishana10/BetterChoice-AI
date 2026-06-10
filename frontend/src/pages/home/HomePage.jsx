@@ -1,63 +1,80 @@
-import { Link } from 'react-router-dom';
-import { CATEGORY_TYPES } from '../../constants';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import CategoryCarousel from '../../components/features/search/CategoryCarousel';
+import ProductGrid from '../../components/features/product/ProductGrid';
+import SearchBar from '../../components/features/search/SearchBar';
+import { useCategories } from '../../hooks/useCategories';
+import { useProducts } from '../../hooks/useProducts';
 
 export default function HomePage() {
+  const navigate = useNavigate();
+  const [query, setQuery] = useState('');
+  const { categories, loading: categoriesLoading } = useCategories();
+  const { products, loading: productsLoading } = useProducts({ page: 0, size: 8 });
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    const params = new URLSearchParams();
+    if (query.trim()) params.set('q', query.trim());
+    navigate(`/search?${params.toString()}`);
+  };
+
   return (
     <div>
-      {/* Hero */}
       <section className="bg-gradient-to-br from-brand-900 via-brand-700 to-brand-600 text-white">
-        <div className="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:py-32">
-          <h1 className="max-w-3xl text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
-            Compare anything. Choose smarter with AI.
+        <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:py-28">
+          <h1 className="max-w-3xl text-4xl font-bold tracking-tight sm:text-5xl">
+            Compare anything. Choose smarter.
           </h1>
-          <p className="mt-6 max-w-2xl text-lg text-brand-100">
-            Products, colleges, restaurants, courses, and more — side-by-side comparisons
-            powered by intelligent insights from Gemini AI.
+          <p className="mt-4 max-w-2xl text-lg text-brand-100">
+            Search laptops, mobiles, and more — compare prices across Amazon, Flipkart, Croma, and beyond.
           </p>
-          <div className="mt-10 flex flex-wrap gap-4">
-            <Link to="/search" className="rounded-lg bg-white px-6 py-3 font-semibold text-brand-700 hover:bg-brand-50">
-              Start Searching
-            </Link>
-            <Link to="/register" className="rounded-lg border border-white/30 px-6 py-3 font-semibold hover:bg-white/10">
-              Create Free Account
-            </Link>
+          <div className="mt-8 max-w-2xl">
+            <SearchBar
+              query={query}
+              onQueryChange={setQuery}
+              onSubmit={handleSearch}
+              placeholder="Shop for anything..."
+            />
           </div>
         </div>
       </section>
 
-      {/* Categories */}
-      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
-        <h2 className="text-2xl font-bold text-gray-900">Compare across categories</h2>
-        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {CATEGORY_TYPES.map((cat) => (
-            <Link
-              key={cat.value}
-              to={`/search?category=${cat.value}`}
-              className="card transition hover:border-brand-300 hover:shadow-md"
-            >
-              <h3 className="font-semibold text-gray-900">{cat.label}</h3>
-              <p className="mt-1 text-sm text-gray-500">AI-powered comparison</p>
-            </Link>
-          ))}
+      <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
+        <div className="mb-6 flex items-center justify-between">
+          <h2 className="text-xl font-bold text-gray-900">Browse categories</h2>
+          <Link to="/search" className="text-sm font-medium text-brand-600 hover:underline">
+            View all →
+          </Link>
         </div>
+        <CategoryCarousel categories={categories} loading={categoriesLoading} />
       </section>
 
-      {/* Features */}
-      <section className="bg-gray-100 py-16">
+      <section className="bg-gray-50 py-12">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
-          <h2 className="text-2xl font-bold text-gray-900">Why BetterChoice AI?</h2>
-          <div className="mt-8 grid gap-6 md:grid-cols-3">
-            {[
-              { title: 'Universal Comparison', desc: 'One platform for products, services, education, and more.' },
-              { title: 'AI Insights', desc: 'Gemini-powered summaries, pros/cons, and smart recommendations.' },
-              { title: 'Save & Share', desc: 'Keep comparison history and share results with a link.' },
-            ].map((f) => (
-              <div key={f.title} className="card">
-                <h3 className="font-semibold text-gray-900">{f.title}</h3>
-                <p className="mt-2 text-sm text-gray-600">{f.desc}</p>
-              </div>
-            ))}
+          <div className="mb-6 flex items-center justify-between">
+            <h2 className="text-xl font-bold text-gray-900">Popular options</h2>
+            <Link to="/search" className="text-sm font-medium text-brand-600 hover:underline">
+              More →
+            </Link>
           </div>
+          <ProductGrid products={products} loading={productsLoading} />
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
+        <h2 className="text-2xl font-bold text-gray-900">Why BetterChoice AI?</h2>
+        <div className="mt-8 grid gap-6 md:grid-cols-3">
+          {[
+            { title: 'Multi-platform prices', desc: 'See the best deal across Indian marketplaces in one grid.' },
+            { title: 'Smart comparison', desc: 'Side-by-side specs, ratings, and delivery — ready to compare.' },
+            { title: 'AI insights', desc: 'Gemini-powered recommendations coming in Phase 3.' },
+          ].map((f) => (
+            <div key={f.title} className="card">
+              <h3 className="font-semibold text-gray-900">{f.title}</h3>
+              <p className="mt-2 text-sm text-gray-600">{f.desc}</p>
+            </div>
+          ))}
         </div>
       </section>
     </div>

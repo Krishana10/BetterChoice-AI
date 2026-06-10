@@ -28,19 +28,44 @@ BetterChoice AI/
 
 ### Prerequisites
 
-- Java 21, Maven 3.9+
+- Java 21+ (JDK 25 supported with Lombok 1.18.40+)
 - Node.js 20+, npm
 - PostgreSQL 16
 - Docker (optional)
+- Maven is **optional** — the backend includes `mvnw.cmd` (Maven Wrapper)
 
 ### Backend
 
-```bash
+```powershell
 cd backend
-cp src/main/resources/application-dev.yml.example src/main/resources/application-dev.yml
-# Set DB credentials, JWT secret, GEMINI_API_KEY
-mvn spring-boot:run -Dspring-boot.run.profiles=dev
+
+# Set JAVA_HOME if not configured (adjust path to your JDK)
+$env:JAVA_HOME = "C:\Program Files\Eclipse Adoptium\jdk-25.0.3.9-hotspot"
+
+# Use mvnw.cmd — no global Maven install needed
+.\mvnw.cmd clean compile -DskipTests
+
+# Quote -D flags in PowerShell (otherwise it splits on the hyphen)
+.\mvnw.cmd spring-boot:run "-Dspring-boot.run.profiles=dev"
 ```
+
+Copy `src/main/resources/application-dev.yml.example` to `application-dev.yml` if missing.
+
+**Docker Postgres** uses password `postgres` — run with:
+
+```bash
+# PowerShell
+$env:SPRING_DATASOURCE_PASSWORD="postgres"
+.\mvnw.cmd spring-boot:run "-Dspring-boot.run.profiles=dev"
+```
+
+**`mvn` not recognized?** Use `.\mvnw.cmd` instead of `mvn` (same flags).
+
+**Troubleshooting `BUILD FAILURE` on `spring-boot:run`:**
+- `TypeTag :: UNKNOWN` → upgrade Lombok (already 1.18.40 in pom) or use JDK 21
+- `password authentication failed` → set `SPRING_DATASOURCE_PASSWORD` to match your Postgres
+- `Connection refused` → start Postgres (`docker compose up -d` in `docker/`)
+- `Migration checksum mismatch for migration version 2` → dev profile auto-repairs on startup (`FlywayDevConfig`); or reset DB: `DROP DATABASE betterchoice; CREATE DATABASE betterchoice;`
 
 ### Frontend
 

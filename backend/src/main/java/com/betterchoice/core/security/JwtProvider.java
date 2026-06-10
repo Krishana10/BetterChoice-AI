@@ -53,6 +53,14 @@ public class JwtProvider {
                 .compact();
     }
 
+    public Claims parseAccessToken(String token) {
+        Claims claims = parseClaims(token);
+        if (!ACCESS_TYPE.equals(claims.get(TYPE_CLAIM, String.class))) {
+            throw new JwtException("Invalid access token type");
+        }
+        return claims;
+    }
+
     public Claims parseRefreshToken(String token) {
         Claims claims = parseClaims(token);
         if (!REFRESH_TYPE.equals(claims.get(TYPE_CLAIM, String.class))) {

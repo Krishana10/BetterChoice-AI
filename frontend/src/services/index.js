@@ -12,10 +12,18 @@ export const userService = {
   updateMe: (data) => api.put('/users/me', data),
 };
 
+export const categoryService = {
+  list: (params) => api.get('/categories', { params }),
+  getById: (id) => api.get(`/categories/${id}`),
+  getBySlug: (slug) => api.get(`/categories/slug/${slug}`),
+};
+
 export const productService = {
   list: (params) => api.get('/products', { params }),
   getById: (id) => api.get(`/products/${id}`),
   getBySlug: (slug) => api.get(`/products/slug/${slug}`),
+  getAttributes: (id) => api.get(`/products/${id}/attributes`),
+  getSources: (id) => api.get(`/products/${id}/sources`),
 };
 
 export const comparisonService = {

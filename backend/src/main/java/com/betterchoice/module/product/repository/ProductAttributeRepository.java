@@ -1,0 +1,12 @@
+package com.betterchoice.module.product.repository;
+
+import com.betterchoice.module.product.entity.ProductAttribute;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
+import java.util.UUID;
+
+public interface ProductAttributeRepository extends JpaRepository<ProductAttribute, UUID> {
+
+    List<ProductAttribute> findByProductIdOrderByDisplayOrderAsc(UUID productId);
+}
